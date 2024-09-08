@@ -189,10 +189,10 @@ function SignUp() {
           </div>
           <div className="button-container">
             <div className="group-9" onClick={() => navigate('/')}>
-              <span className="cancel">Cancel</span>
+              <span className="cancel">취소</span>
             </div>
             <div className="group-10" onClick={handleSubmit}>
-              <span className="save">Save</span>
+              <span className="save">회원가입</span>
             </div>
           </div>
         </form>

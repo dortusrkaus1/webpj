@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignUp from './pages/SignUp';
-import VerifyCode from './pages/VerifyCode';
+import VerificationFailed from './pages/VerificationFailed';
 import './App.css';  // 스타일 적용
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
         <header className="App-header">
           <Routes>
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/verify-code" element={<VerifyCode />} />
+            <Route path="/verification-failed" element={<VerificationFailed />} />
           </Routes>
         </header>
       </Router>
