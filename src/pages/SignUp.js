@@ -10,7 +10,7 @@ function SignUp() {
     user_name: '',
     cell_phone: '',
     address: '',
-    gender: '남성',  // 기본 값 설정
+    gender: '남성',  
     birthday: { year: '', month: '', day: '' }
   });
 
@@ -50,7 +50,7 @@ function SignUp() {
       alert('회원가입 성공! 이메일을 확인하여 인증 코드를 입력하세요.');
       navigate('/verify-code');
     } catch (error) {
-      alert('회원가입 실패: ' + error.response.data.detail);
+      alert('회원가입 실패: ' + (error.response ? error.response.data.detail : error.message));
     }
   };
 
@@ -188,12 +188,12 @@ function SignUp() {
             </div>
           </div>
           <div className="button-container">
-            <div className="group-9" onClick={() => navigate('/')}>
+            <button type="button" onClick={() => navigate('/')}>
               <span className="cancel">취소</span>
-            </div>
-            <div className="group-10" onClick={handleSubmit}>
+            </button>
+            <button type="submit">
               <span className="save">회원가입</span>
-            </div>
+            </button>
           </div>
         </form>
       </div>
