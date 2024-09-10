@@ -9,19 +9,42 @@ function SignUp() {
     password: '',
     user_name: '',
     cell_phone: '',
-    address: '',
     gender: '남성',  
     birthday: { year: '', month: '', day: '' }
   });
 
   const navigate = useNavigate();
 
+  // 핸드폰 번호 포맷팅 함수
+  const formatPhoneNumber = (value) => {
+    const cleaned = ('' + value).replace(/\D/g, '');
+    if (cleaned.length <= 3) {
+      return cleaned;
+    } else if (cleaned.length <= 7) {
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    } else {
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7, 11)}`;
+    }
+  };
+
+  // 하이픈 제거 함수
+  const removeHyphens = (value) => {
+    return value.replace(/-/g, '');
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: value
-    }));
+    if (name === 'cell_phone') {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: formatPhoneNumber(value)
+      }));
+    } else {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: value
+      }));
+    }
   };
 
   const handleDateChange = (e) => {
@@ -45,8 +68,21 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // 생년월일 포맷팅
       const formattedBirthday = `${formData.birthday.year}-${formData.birthday.month.padStart(2, '0')}-${formData.birthday.day.padStart(2, '0')}`;
-      await axios.post('http://localhost:8000/users/signup', { ...formData, birthday: formattedBirthday });
+      
+      // 핸드폰 번호에서 하이픈 제거
+      const phoneNumberWithoutHyphens = removeHyphens(formData.cell_phone);
+      
+      // 전송할 데이터 준비
+      const dataToSend = {
+        ...formData,
+        birthday: formattedBirthday,
+        cell_phone: phoneNumberWithoutHyphens
+      };
+      
+      // 데이터 전송
+      await axios.post('http://localhost:8000/users/signup', dataToSend);
       alert('회원가입 성공! 이메일을 확인하여 인증 코드를 입력하세요.');
       navigate('/verify-code');
     } catch (error) {
@@ -77,17 +113,6 @@ function SignUp() {
               name="email"
               placeholder="rlfehd@gmail.com"
               value={formData.email}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </div>
-          <div className="field-container">
-            <div className="label">주소</div>
-            <input
-              type="text"
-              name="address"
-              placeholder="주소를 입력하세요"
-              value={formData.address}
               onChange={handleChange}
               className="input-field"
             />
@@ -189,7 +214,7 @@ function SignUp() {
           </div>
           <div className="button-container">
             <button type="button" className="group-9" onClick={() => navigate('/login')}>
-            취소
+              취소
             </button>
             <button type="submit" className="group-10">
               회원가입
