@@ -188,7 +188,7 @@ function SignUp() {
             </div>
           </div>
           <div className="button-container">
-            <button type="button" className="group-9" onClick={() => navigate('/')}>
+            <button type="button" className="group-9" onClick={() => navigate('/login')}>
             취소
             </button>
             <button type="submit" className="group-10">
