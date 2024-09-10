@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './SignUp.css';  // 스타일링 적용
+import './SignUp.css'; 
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -150,7 +150,7 @@ function SignUp() {
             </div>
           </div>
           <div className="field-container">
-            <div className="birthday-label">생일</div>
+            <div className="birthday-label">생년월일</div>
             <div className="birthday-container">
               <select
                 name="year"
@@ -188,11 +188,11 @@ function SignUp() {
             </div>
           </div>
           <div className="button-container">
-            <button type="button" onClick={() => navigate('/')}>
-              <span className="cancel">취소</span>
+            <button type="button" className="group-9" onClick={() => navigate('/')}>
+            취소
             </button>
-            <button type="submit">
-              <span className="save">회원가입</span>
+            <button type="submit" className="group-10">
+              회원가입
             </button>
           </div>
         </form>

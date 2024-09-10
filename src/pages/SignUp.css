@@ -82,7 +82,8 @@
 
 /* 생일 입력 필드 스타일 */
 .field-container select {
-  width: 30%;
+  width: 300%;
+  min-width: 100px;
 }
 
 .field-container .input-field {
