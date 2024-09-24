@@ -1,0 +1,118 @@
+.App {
+  background-color: lightgray;
+}
+
+.login {
+  background-color: white;
+  width: 37.7vw;
+  height: 100vh;
+  margin: auto;
+}
+
+.logo {
+  justify-content: center;
+  display: flex;
+  flex-direction: column; /* 수직 정렬을 위해 추가 */
+  align-items: center; /* 로고와 input이 중앙에 위치하도록 설정 */
+  padding-top: 20vh;
+}
+
+.id {
+  display: flex;
+  flex-direction: column; /* 자식 요소들을 수직으로 정렬 */
+  justify-content: center;
+  padding-top: 4.5vh;
+  /* align-items: center; */
+  height: auto; /* height를 자동으로 조정 */
+}
+
+.id input {
+  width: 350px; /* 부모 요소의 전체 너비를 사용 */
+  height: 70px; /* 적절한 높이 설정 */
+  padding: 0 10px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 0px solid white;
+  background-color: #d9d9d933;
+  font-size: large;
+}
+
+.stay {
+  padding: 2vh 0vh;
+  border-radius: 2px;
+  accent-color: black;
+}
+
+.loginButton {
+  width: 350px;
+  height: 55px;
+  border-radius: 5px;
+  border: 0;
+  font-size: 28px;
+  color: white;
+  background-color: #ff088e;
+  cursor: pointer;
+}
+
+a {
+  color: gray;
+  text-decoration: none;
+}
+
+.register {
+  margin-top: 50px;
+  padding-left: 50px;
+}
+
+.registerFind {
+  justify-content: center;
+  width: 350px;
+  align-items: center;
+  margin: auto;
+  padding-top: 30px;
+}
+
+.socialLogin {
+  width: 70px;
+  height: 70px;
+  border-radius: 112px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* .App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  } 
+}*/
