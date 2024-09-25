@@ -7,7 +7,7 @@
   display: flex; /* Flexbox 레이아웃 사용 */
   justify-content: center; /* 가로 방향 중앙 정렬 */
   padding: 40px; /* 내부 여백 추가 */
-  width: 100%; /* 전체 너비 설정 */
+  width: 3840px; /* 전체 너비 설정 */
   box-sizing: border-box; /* 패딩과 테두리를 포함한 전체 크기 설정 */
 }
 

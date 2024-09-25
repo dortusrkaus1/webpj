@@ -9,7 +9,7 @@ function SignUp() {
     password: '',
     user_name: '',
     cell_phone: '',
-    gender: '남성',  
+    gender: '남성',
     birthday: { year: '', month: '', day: '' }
   });
 
@@ -89,8 +89,10 @@ function SignUp() {
       });
 
       if (response.status === 200) {
-        const token = response.data.access_token; // 서버에서 반환한 토큰을 사용
-        localStorage.setItem("access_token", token); // 로컬 스토리지에 저장
+        const userNo = response.data.user_no; // 서버에서 반환한 user_no 가져오기
+        const token = response.data.access_token;
+        localStorage.setItem("user_no", userNo); // 로컬 스토리지에 저장
+        localStorage.setItem("access_token", token);
         alert('회원가입 성공! 이메일을 확인하여 인증 코드를 입력하세요.');
         navigate('/verify-code');
       }

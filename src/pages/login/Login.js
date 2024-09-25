@@ -31,9 +31,13 @@ function Login() {
         }
       );
 
+      console.log(response.data); // 응답 데이터 확인
+
       if (response.status === 200) {
         const token = response.data.access_token; // 서버에서 반환한 토큰을 사용
-        localStorage.setItem("access_token", token); // 로컬 스토리지에 저장
+        const userNo = response.data.user_no; // 서버에서 반환한 user_no
+        localStorage.setItem("access_token", token); // 로컬 스토리지에 토큰 저장
+        localStorage.setItem("user_no", userNo); // user_no도 로컬 스토리지에 저장
         alert("로그인 성공!");
       } else {
         alert("로그인 실패");
