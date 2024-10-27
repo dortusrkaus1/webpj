@@ -1,41 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Profile.css"; // CSS 파일 import
+import "./ProfileRegister.css"; // CSS 파일 import
 
-const ProfileUpdate = () => {
+const ProfileRegister = () => {
     const [nickname, setNickname] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [imagePreview, setImagePreview] = useState("");
     const [error, setError] = useState(null);
     const [user_no, setUserNo] = useState(null);
 
-    // 사용자 번호 설정
     useEffect(() => {
         const storedUserNo = localStorage.getItem('user_no');
         if (storedUserNo) {
-            setUserNo(Number(storedUserNo)); // 사용자 번호 설정
+            setUserNo(Number(storedUserNo)); // 문자열을 숫자로 변환
         }
     }, []);
 
-    // 닉네임 입력 핸들러
     const handleNicknameChange = (e) => {
         setNickname(e.target.value);
     };
 
-    // 이미지 파일 선택 시 미리보기 업데이트
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result); // 이미지 미리보기 업데이트
-                setImageUrl(file.name); // 파일 이름을 이미지 URL로 설정
+                setImageUrl(file.name); // 이미지 URL 대신 파일 이름을 사용
             };
             reader.readAsDataURL(file); // 파일을 Data URL로 읽기
         }
     };
 
-    // 폼 제출 핸들러 (프로필 수정)
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (user_no === null) {
@@ -43,41 +39,41 @@ const ProfileUpdate = () => {
             return;
         }
 
-        // 전송할 데이터
         const data = {
             nickname: nickname,
-            image_url: imageUrl, // 이미지 URL (파일 이름)
+            image_url: imageUrl,
         };
 
         const accessToken = localStorage.getItem('access_token');
 
         try {
-            // 프로필 수정 API 요청 (PUT)
-            const response = await axios.put(
-                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-update/${user_no}`,
+            const response = await axios.post(
+                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-create/${user_no}`,
                 data,
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}` // 액세스 토큰 포함
+                        'Authorization': `Bearer ${accessToken}` // 액세스 토큰을 포함합니다.
                     }
                 }
             );
 
             console.log(response.data);
-            alert("프로필이 성공적으로 수정되었습니다!");
+            alert("프로필이 성공적으로 등록되었습니다!");
+            setNickname("");
+            setImageUrl("");
+            setImagePreview(""); // 등록 후 미리보기 초기화
         } catch (error) {
-            console.error("프로필 수정 중 오류 발생:", error);
-            setError("프로필 수정에 실패했습니다.");
+            console.error("프로필 등록 중 오류 발생:", error);
+            setError("프로필 등록에 실패했습니다.");
         }
     };
 
     return (
         <div className="container">
             <div className="profile-frame">
-                <h1 className="profile-title">프로필 수정</h1>
+                <h1 className="profile-title">프로필 등록</h1>
                 <form onSubmit={handleSubmit}>
-                    {/* 닉네임 필드 */}
                     <div className="field-container">
                         <label className="label">닉네임</label>
                         <input
@@ -85,12 +81,10 @@ const ProfileUpdate = () => {
                             type="text"
                             value={nickname}
                             onChange={handleNicknameChange}
-                            placeholder="닉네임"
+                            placeholder="닉네임 입력"
                             required
                         />
                     </div>
-
-                    {/* 이미지 업로드 필드 */}
                     <div className="field-container">
                         <label className="label">이미지 업로드</label>
                         <div className="custom-file-upload">
@@ -98,7 +92,8 @@ const ProfileUpdate = () => {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
-                                id="file-upload"
+                                required
+                                id="file-upload" // id 추가
                             />
                             <label htmlFor="file-upload">파일 선택</label> {/* 라벨 클릭 시 파일 선택 */}
                         </div>
@@ -108,10 +103,8 @@ const ProfileUpdate = () => {
                             <img src={imagePreview} alt="미리보기" className="image-preview" />
                         </div>
                     )}
-
-                    {/* 수정 버튼 */}
                     <div className="button-container">
-                        <button className="update-button" type="submit" disabled={user_no === null}>프로필 수정</button>
+                        <button className="update-button" type="submit" disabled={user_no === null}>프로필 등록</button>
                     </div>
                 </form>
                 {error && <p className="error-text">{error}</p>}
@@ -120,4 +113,4 @@ const ProfileUpdate = () => {
     );
 };
 
-export default ProfileUpdate;
+export default ProfileRegister;

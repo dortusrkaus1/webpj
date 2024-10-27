@@ -4,8 +4,8 @@ import SignUp from "./pages/signup/SignUp";
 import VerificationFailed from "./pages/verificationfailed/VerificationFailed";
 import Login from "./pages/login/Login";
 import Verify from "./pages/verify/VerifyCode";
-import ProfileRegister from "./pages/profile/ProfileRegister";
-import ProfileUpdate from "./pages/profile/ProfileUpdate";
+import ProfileRegister from "./pages/profileRegister/ProfileRegister";
+import ProfileUpdate from "./pages/profileUpdate/ProfileUpdate";
 import "./App.css"; // 스타일 적용
 
 function App() {
