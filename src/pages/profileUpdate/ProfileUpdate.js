@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./profileUpdate.css"; // CSS 파일 import
+import "./profileUpdate.css"; // CSS 경로 입니다
 
 const ProfileUpdate = () => {
     const [nickname, setNickname] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
+    const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
     const [error, setError] = useState(null);
     const [user_no, setUserNo] = useState(null);
@@ -21,16 +21,19 @@ const ProfileUpdate = () => {
 
     // 사용자 번호와 프로필 정보 가져오기
     useEffect(() => {
+        console.log("useEffect 실행됨: 사용자 정보 및 이미지 가져오기 시작");
         const storedUserNo = localStorage.getItem('user_no');
         if (storedUserNo) {
             setUserNo(Number(storedUserNo)); // 사용자 번호 설정
             fetchUserProfile(Number(storedUserNo)); // 프로필 정보 가져오기
+            fetchUserProfileImage(Number(storedUserNo)); // 프로필 이미지 가져오기
         }
     }, []);
 
     const fetchUserProfile = async (user_no) => {
         const accessToken = localStorage.getItem('access_token');
         try {
+            console.log("프로필 정보 가져오는 요청 시작");
             const response = await axios.get(
                 `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile/${user_no}`, // 프로필 정보 가져오는 API
                 {
@@ -40,10 +43,8 @@ const ProfileUpdate = () => {
                 }
             );
 
-            const { nickname, image_url, email, cell_phone, birthday, gender } = response.data;
+            const { nickname, email, cell_phone, birthday, gender } = response.data;
             setNickname(nickname);
-            setImageUrl(image_url);
-            setImagePreview(image_url); // 초기 이미지 미리보기 설정
             
             // 사용자 정보 설정
             setEmail(email);
@@ -56,6 +57,31 @@ const ProfileUpdate = () => {
         }
     };
 
+    const fetchUserProfileImage = async (user_no) => {
+        console.log("fetchUserProfileImage 호출됨: 사용자 번호", user_no);
+        const accessToken = localStorage.getItem('access_token');
+        try {
+            const response = await axios.get(
+                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-image/${user_no}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    responseType: 'blob' // 이미지 데이터를 blob으로 받기
+                }
+            );
+            console.log("프로필 이미지 서버 응답:", response);
+
+            const imageBlob = response.data;
+            const imageUrl = URL.createObjectURL(imageBlob);
+            setImagePreview(imageUrl);
+            console.log("이미지 URL:", imageUrl);
+        } catch (error) {
+            console.error("사용자 프로필 이미지를 가져오는 중 오류 발생:", error);
+            setError("사용자 프로필 이미지를 불러오는 데 실패했습니다.");
+        }
+    };
+
     const handleNicknameChange = (e) => {
         setNickname(e.target.value);
     };
@@ -63,10 +89,10 @@ const ProfileUpdate = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setImageFile(file); // 이미지 파일 설정
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result); // 이미지 미리보기 업데이트
-                setImageUrl(file.name); // 파일 이름을 이미지 URL로 설정
             };
             reader.readAsDataURL(file); // 파일을 Data URL로 읽기
         }
@@ -79,14 +105,53 @@ const ProfileUpdate = () => {
             return;
         }
 
-        const data = {
-            nickname: nickname,
-            image_url: imageUrl, // 이미지 URL (파일 이름)
-        };
-
         const accessToken = localStorage.getItem('access_token');
 
         try {
+            // 유효성 검증 추가
+            if (!nickname) {
+                setError("닉네임을 입력해주세요.");
+                return;
+            }
+            if (imageFile && !["image/jpeg", "image/png"].includes(imageFile.type)) {
+                setError("올바른 형식의 이미지를 업로드해주세요 (jpeg 또는 png).");
+                return;
+            }
+
+            // 이미지 업로드가 필요한 경우
+            let imageUrl = imagePreview;
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append("file", imageFile); // 필드 이름을 "file"로 변경
+                formData.append("nickname", nickname); // 닉네임 추가
+                try {
+                    const imageResponse = await axios.post(
+                        `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-create/${user_no}`,
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                'Authorization': `Bearer ${accessToken}`
+                            }
+                        }
+                    );
+                    imageUrl = imageResponse.data.image_url;
+                } catch (postError) {
+                    if (postError.response && postError.response.data.detail === "Profile already exists for this user.") {
+                        // 프로필이 이미 존재하는 경우
+                        console.log("프로필이 이미 존재합니다. 업데이트합니다.");
+                    } else {
+                        throw postError;
+                    }
+                }
+            }
+
+            // 프로필 업데이트 (PUT 요청)
+            const data = {
+                nickname: nickname,
+                image_url: imageUrl,
+            };
+
             const response = await axios.put(
                 `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-update/${user_no}`,
                 data,
@@ -101,8 +166,13 @@ const ProfileUpdate = () => {
             console.log(response.data);
             alert("프로필이 성공적으로 수정되었습니다!");
         } catch (error) {
-            console.error("프로필 수정 중 오류 발생:", error);
-            setError("프로필 수정에 실패했습니다.");
+            if (error.response && error.response.data) {
+                console.error("프로필 수정 중 오류 발생:", JSON.stringify(error.response.data, null, 2));
+                setError(`프로필 수정에 실패했습니다: ${error.response.data.message || "알 수 없는 오류"}`);
+            } else {
+                console.error("프로필 수정 중 오류 발생:", error);
+                setError("프로필 수정에 실패했습니다.");
+            }
         }
     };
 
@@ -186,7 +256,13 @@ const ProfileUpdate = () => {
                     </div>
                     {imagePreview && (
                         <div className="image-preview-container">
-                            <img src={imagePreview} alt="미리보기" className="image-preview" />
+                            <img
+                                src={imagePreview || 'default-image.png'}
+                                alt="미리보기"
+                                className="image-preview"
+                                style={{ width: '150px', height: '100px', borderRadius: '50%', objectFit: 'cover', aspectRatio: '1 / 1' }}
+                                onError={(e) => { e.target.onerror = null; e.target.src = 'default-image.png'; }}
+                            />
                         </div>
                     )}
 
