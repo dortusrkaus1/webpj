@@ -1,55 +1,59 @@
-// SidebarComponent.js
-import React from 'react';
+import React, { useState } from 'react';
 import './SidebarComponent.css';
 
 const SidebarComponent = () => {
+  // 현재 열려 있는 메뉴 항목의 인덱스를 저장하는 상태
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+
+  // 메뉴 항목 클릭 시 호출되는 함수
+  const handleMenuClick = (index) => {
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
+
+  const [isSidebarClicked, setIsSidebarClicked] = useState(false);
+
+  // 사이드바 햄버거 버튼 클릭 시 호출되는 함수
+  const handleSidebarToggle = () => {
+    if (isSidebarClicked) {
+      // 사이드바가 닫힐 때 서브메뉴도 닫음
+      setOpenMenuIndex(null);
+    }
+    setIsSidebarClicked(!isSidebarClicked);
+  };
+
   return (
-    <aside className="side-bar">
-      <section className="side-bar__icon-box">
+    <aside className={`side-bar ${isSidebarClicked ? 'side-bar-icon-clicked' : ''}`}>
+      {/* 햄버거 버튼 */}
+      <section className="side-bar__icon-box" onClick={handleSidebarToggle}>
         <section className="side-bar__icon-1">
           <div></div>
           <div></div>
           <div></div>
         </section>
       </section>
+      
+      {/* 사이드바 메뉴 */}
       <ul>
-        <li>
-          <a href="#" className="menu-text"><i className="fa-solid fa-cat"></i>마이페이지</a>
-          <ul>
-            <li><a href="#" className="menu-text">text1</a></li>
-            <li><a href="#" className="menu-text">text2</a></li>
-            <li><a href="#" className="menu-text">text3</a></li>
-            <li><a href="#" className="menu-text">text4</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#" className="menu-text">공간전환</a>
-          <ul>
-            <li><a href="#" className="menu-text">text1</a></li>
-            <li><a href="#" className="menu-text">text2</a></li>
-            <li><a href="#" className="menu-text">text3</a></li>
-            <li><a href="#" className="menu-text">text4</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#" className="menu-text">물건배치</a>
-          <ul>
-            <li><a href="#" className="menu-text">text1</a></li>
-            <li><a href="#" className="menu-text">text2</a></li>
-            <li><a href="#" className="menu-text">text3</a></li>
-            <li><a href="#" className="menu-text">text4</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#" className="menu-text">가구배치</a>
-          <ul>
-            <li><a href="#" className="menu-text">text1</a></li>
-            <li><a href="#" className="menu-text">text2</a></li>
-            <li><a href="#" className="menu-text">text3</a></li>
-            <li><a href="#" className="menu-text">text4</a></li>
-          </ul>
-        </li>
+        {[
+          { name: "마이페이지", link: "#" },
+          { name: "공간", link: "/area-add" },
+          { name: "방", link: "/room-add" },
+          { name: "수납장", link: "/storage-add" },
+          { name: "물건", link: "#" }
+        ].map((menu, index) => (
+          <li key={index}>
+            <a
+              href={menu.link}
+              className="menu-text"
+              onClick={() => handleMenuClick(index)}
+            >
+              {menu.name}
+            </a>
+          </li>
+        ))}
       </ul>
+
+      {/* 로그아웃 버튼 */}
       <div className="side-bar__logout-button">
         <button className="Btn">
           <div className="sign">

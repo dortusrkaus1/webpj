@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./profileUpdate.css"; // CSS 경로 입니다
+import "./profileUpdate.css"; // CSS 경로입니다
 
 const ProfileUpdate = () => {
     const [nickname, setNickname] = useState("");
@@ -19,6 +19,9 @@ const ProfileUpdate = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
+    // API 고정 경로 정의
+    const API_BASE_URL = "https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app";
+
     // 사용자 번호와 프로필 정보 가져오기
     useEffect(() => {
         console.log("useEffect 실행됨: 사용자 정보 및 이미지 가져오기 시작");
@@ -35,11 +38,12 @@ const ProfileUpdate = () => {
         try {
             console.log("프로필 정보 가져오는 요청 시작");
             const response = await axios.get(
-                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile/${user_no}`, // 프로필 정보 가져오는 API
+                `${API_BASE_URL}/users/profile/${user_no}`, // 고정 경로 사용
                 {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
-                    }
+                    },
+                    withCredentials: true // 쿠키 포함
                 }
             );
 
@@ -62,12 +66,13 @@ const ProfileUpdate = () => {
         const accessToken = localStorage.getItem('access_token');
         try {
             const response = await axios.get(
-                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-image/${user_no}`,
+                `${API_BASE_URL}/users/profile-image/${user_no}`, // 고정 경로 사용
                 {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     },
-                    responseType: 'blob' // 이미지 데이터를 blob으로 받기
+                    responseType: 'blob', // 이미지 데이터를 blob으로 받기
+                    withCredentials: true // 쿠키 포함
                 }
             );
             console.log("프로필 이미지 서버 응답:", response);
@@ -126,19 +131,18 @@ const ProfileUpdate = () => {
                 formData.append("nickname", nickname); // 닉네임 추가
                 try {
                     const imageResponse = await axios.post(
-                        `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-create/${user_no}`,
+                        `${API_BASE_URL}/users/profile-create/${user_no}`, // 고정 경로 사용
                         formData,
                         {
                             headers: {
-                                'Content-Type': 'multipart/form-data',
                                 'Authorization': `Bearer ${accessToken}`
-                            }
+                            },
+                            withCredentials: true // 쿠키 포함
                         }
                     );
                     imageUrl = imageResponse.data.image_url;
                 } catch (postError) {
                     if (postError.response && postError.response.data.detail === "Profile already exists for this user.") {
-                        // 프로필이 이미 존재하는 경우
                         console.log("프로필이 이미 존재합니다. 업데이트합니다.");
                     } else {
                         throw postError;
@@ -153,13 +157,13 @@ const ProfileUpdate = () => {
             };
 
             const response = await axios.put(
-                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-update/${user_no}`,
+                `${API_BASE_URL}/users/profile-update/${user_no}`, // 고정 경로 사용
                 data,
                 {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}` // 액세스 토큰 포함
-                    }
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    withCredentials: true // 쿠키 포함
                 }
             );
 
@@ -187,12 +191,13 @@ const ProfileUpdate = () => {
 
         try {
             const response = await axios.put(
-                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/change-password`,
+                `${API_BASE_URL}/users/change-password`, // 고정 경로 사용
                 { password: newPassword },
                 {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}` // 액세스 토큰 포함
-                    }
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    withCredentials: true // 쿠키 포함
                 }
             );
 

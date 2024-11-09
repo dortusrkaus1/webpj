@@ -77,7 +77,7 @@ const ProfileRegister = () => {
         try {
             const formData = new FormData();
             formData.append('nickname', nickname);
-            formData.append('file', imageFile); // 이미지 필드 이름을 "file"로 변경하여 서버 기대에 맞춤
+            formData.append('file', imageFile);
     
             const response = await axios.post(
                 `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/users/profile-create/${user_no}`,
