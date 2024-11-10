@@ -6,8 +6,8 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: #ffffff; /* 기본 배경색을 흰색으로 설정 */
-  font-family: 'Roboto', sans-serif; /* 전체 글씨에 Roboto 폰트 적용 */
+  background-color: #ffffff;
+  font-family: 'Roboto', sans-serif;
 }
 
 /* 전체 페이지 레이아웃 컨테이너 설정 */
@@ -15,56 +15,22 @@ html, body {
   display: flex;
   height: 100vh;
   width: 100vw;
-  background-color: #ffffff; /* 전체 레이아웃 배경색을 흰색으로 설정 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-}
-
-/* 헤더와 콘텐츠 영역의 기본 설정 */
-.header-container {
-  width: 100%; /* 항상 전체 너비를 차지하도록 설정 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-}
-
-/* 레이아웃 콘텐츠 설정 */
-.layout-content {
-  display: flex;
-  flex: 1;
-  margin-top: 60px;
-  width: 100%; /* 항상 전체 너비를 차지하도록 설정 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-}
-
-/* 메인 콘텐츠 설정 */
-.layout-main {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background-color: #ffffff; /* 메인 콘텐츠 배경을 흰색으로 설정 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-}
-
-/* From Uiverse.io by 0xnihilism */
-.input__container-wrapper {
-  margin: 50px auto; /* 위아래 여백 설정 및 수평 중앙 정렬 */
-  display: flex;
-  justify-content: center; /* 내부 요소 수평 중앙 정렬 */
-  align-items: center; /* 내부 요소 수직 중앙 정렬 */
-  width: 100%; /* 화면 전체 너비를 차지하도록 설정 */
-  max-width: 600px; /* 최대 너비를 지정하여 중앙 정렬 효과 */
+  background-color: #ffffff;
   font-family: 'Roboto', sans-serif;
-  position: relative; /* 고정되지 않도록 position을 relative로 설정 */
-  bottom: auto; /* bottom 속성을 제거 */
-  left: auto; /* left 속성을 제거 */
-  transform: none; /* 중앙 보정 변환 제거 */
 }
 
-.input__container:focus-within {
-  transform: rotateX(5deg) rotateY(1deg) scale(1.05);
-  box-shadow: 25px 25px 0 -5px #e9b50b, 25px 25px 0 0 #000;
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
+/* 공간 추가 입력 박스 스타일 */
+.area_input__container-wrapper {
+  margin: 50px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  font-family: 'Roboto', sans-serif;
 }
 
-.input__container {
+.area_input__container {
   position: relative;
   background: #f0f0f0;
   padding: 20px;
@@ -79,10 +45,27 @@ html, body {
   transform: rotateX(10deg) rotateY(-10deg);
   perspective: 1000px;
   box-shadow: 10px 10px 0 #000;
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
+  font-family: 'Roboto', sans-serif;
 }
 
-.shadow__input {
+/* "공간 추가" 텍스트 스타일 */
+.area_input__container::before {
+  content: "공간 추가"; /* 텍스트가 화면에 표시되도록 content 속성 설정 */
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  background: #e9b50b;
+  color: #000;
+  font-weight: bold;
+  padding: 5px 10px;
+  font-size: 14px;
+  border: 2px solid #000;
+  font-family: 'Roboto', sans-serif;
+  z-index: 4;
+  transform: translateZ(50px);
+}
+
+.area_shadow__input {
   content: "공간 추가";
   position: absolute;
   width: 100%;
@@ -97,49 +80,39 @@ html, body {
     rgba(255, 107, 107, 0.1) 100%
   );
   filter: blur(20px);
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
 }
 
-.input__button__shadow:focus {
+.area_input__button__shadow:focus {
   background: #e9b50b;
   transform: translateZ(10px) translateX(-5px) translateY(-5px);
   box-shadow: 5px 5px 0 0 #000;
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
 }
 
-.input__button__shadow {
+.area_input__button__shadow {
   cursor: pointer;
   border: 3px solid #000;
   background: #e9b50b;
   transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
-  display: inline-flex; /* display 속성을 inline-flex로 변경 */
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 20px; /* 버튼 패딩을 좌우로 늘려 크기를 키움 */
+  padding: 10px 20px;
   transform: translateZ(20px);
   position: relative;
   z-index: 3;
   font-weight: bold;
-  text-transform: none; /* 대문자 변환 제거 */
-  color: #000; /* 텍스트 색상 변경: 검정색 */
-  font-size: 14px; /* 글씨 크기 조정 */
-  text-align: center; /* 텍스트 중앙 정렬 */
-  min-width: 60px; /* 버튼의 최소 너비 지정 */
-  min-height: 40px; /* 버튼의 최소 높이 지정 */
-  box-sizing: border-box; /* 패딩과 테두리를 포함하여 크기 계산 */
-  line-height: normal; /* 줄 간격을 기본값으로 변경 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  text-transform: none;
+  color: #000;
+  font-size: 14px;
+  text-align: center;
+  min-width: 60px;
+  min-height: 40px;
+  box-sizing: border-box;
+  line-height: normal;
+  white-space: nowrap;
 }
 
-.input__search:focus {
-  background: #f0f0f0;
-  transform: translateZ(20px) translateX(-5px) translateY(-5px);
-  box-shadow: 5px 5px 0 0 #000;
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-}
-
-.input__search {
+.area_input__search {
   width: 100%;
   outline: none;
   border: 3px solid #000;
@@ -151,85 +124,64 @@ html, body {
   transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   z-index: 3;
-  font-family: 'Roboto', Arial, sans-serif; /* Roboto 폰트 적용 */
+  font-family: 'Roboto', Arial, sans-serif;
   letter-spacing: -0.5px;
 }
 
-.input__search::placeholder {
+.area_input__search::placeholder {
   color: #666;
   font-weight: bold;
   text-transform: uppercase;
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
 }
 
-.input__container::before {
-  content: "공간 추가";
-  position: absolute;
-  top: -15px;
-  left: 20px;
-  background: #e9b50b;
-  color: #000;
-  font-weight: bold;
-  padding: 5px 10px;
-  font-size: 14px;
-  transform: translateZ(50px);
-  z-index: 4;
-  border: 2px solid #000;
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-}
-
-/* 공간 목록 스타일 설정 */
-.spaces-list {
+/* 공간 목록 스타일 */
+.area_spaces-list {
   margin: 20px auto;
   padding: 20px;
-  max-width: 600px; /* 최대 너비 설정 */
-  background-color: #f9f9f9; /* 공간 목록 배경색 */
-  border: 2px solid #000; /* 테두리 */
-  border-radius: 10px; /* 모서리 둥글게 설정 */
-  box-shadow: 10px 10px 0 #000; /* 그림자 */
+  max-width: 600px;
+  background-color: #f9f9f9;
+  border: 2px solid #000;
+  border-radius: 10px;
+  box-shadow: 10px 10px 0 #000;
 }
 
-/* 공간 목록 제목 */
-.spaces-list h2 {
-  font-size: 24px; /* 제목 글씨 크기 설정 */
-  color: #000; /* 제목 색상 설정 */
-  text-align: center; /* 제목 가운데 정렬 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-  margin-bottom: 15px; /* 아래 여백 설정 */
+.area_spaces-list h2 {
+  font-size: 24px;
+  color: #000;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 15px;
 }
 
-/* 목록을 구성하는 ul 스타일 */
-.spaces-list ul {
-  list-style-type: none; /* 불릿 포인트 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  margin: 0; /* 기본 마진 제거 */
+.area_spaces-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* 각 목록 항목 (li) 스타일 */
-.spaces-list li {
-  background-color: #fff; /* 목록 항목 배경색 */
+.area_space-item {
+  background-color: #fff;
   padding: 15px;
-  margin-bottom: 10px; /* 항목 간 간격 설정 */
-  border: 2px solid #000; /* 테두리 */
-  border-radius: 5px; /* 모서리 둥글게 설정 */
-  box-shadow: 5px 5px 0 #000; /* 항목 그림자 */
-  font-size: 18px; /* 글씨 크기 설정 */
-  font-family: 'Roboto', sans-serif; /* Roboto 폰트 적용 */
-  color: #000; /* 글씨 색상을 검정색으로 설정 */
-  display: flex; /* 아이템 정렬을 위해 flex 설정 */
-  align-items: center; /* 수직 중앙 정렬 */
-  justify-content: space-between; /* 아이템을 좌우로 정렬하여 버튼을 우측에 배치 */
-  gap: 10px; /* 항목 사이 간격 */
-}
-
-/* 수정 및 삭제 버튼 컨테이너 */
-.button-group {
+  margin-bottom: 10px;
+  border: 2px solid #000;
+  border-radius: 5px;
+  box-shadow: 5px 5px 0 #000;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  color: #000;
   display: flex;
-  gap: 5px; /* 버튼 사이 간격 */
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-/* 수정 버튼 */
-.editBtn {
+.area_buttons-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.area_editBtn {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -242,14 +194,14 @@ html, body {
   transition: background-color 0.3s;
 }
 
-.editBtn:hover {
+.area_editBtn:hover {
   background-color: #66668d;
 }
 
 /* 삭제 버튼 */
-.button {
-  width: 40px; /* 수정 버튼과 동일한 크기 */
-  height: 40px; /* 수정 버튼과 동일한 크기 */
+.area_button.deleteBtn {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: rgb(20, 20, 20);
   border: none;
@@ -266,79 +218,55 @@ html, body {
   gap: 2px;
 }
 
-.svgIcon {
+.area_button.deleteBtn:hover {
+  background-color: rgb(255, 69, 69);
+}
+
+.area_button.deleteBtn .svgIcon {
   width: 12px;
   transition-duration: 0.3s;
 }
 
-.svgIcon path {
-  fill: white;
-}
-
-.button:hover {
-  transition-duration: 0.3s;
-  background-color: rgb(255, 69, 69);
-  align-items: center;
-  gap: 0;
-}
-
-.bin-top {
-  transform-origin: bottom right;
-}
-
-.button:hover .bin-top {
-  transition-duration: 0.5s;
+.area_button.deleteBtn:hover .svgIcon.bin-top {
   transform: rotate(160deg);
 }
 
-.bin-bottom {
-  display: block;
+.area_error-text {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 }
-
-.space-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* 전체 요소들 간의 공간을 균등하게 분배 */
-  gap: 10px; /* 항목 사이 간격 */
-}
-
-.buttons-container {
-  display: flex;
-  gap: 10px; /* 수정 및 삭제 버튼 간 간격 */
-  align-items: center;
-}
-
 
 /* 반응형 설정 */
 @media (max-width: 768px) {
   .layout-content {
-    padding-left: 30px; /* 더 많은 여유 공간을 확보하여 그림자가 가려지지 않도록 함 */
+    padding-left: 30px;
   }
 
-  .spaces-list {
-    max-width: 85%; /* 여유 공간을 위해 너비를 줄임 */
+  .area_spaces-list {
+    max-width: 85%;
     padding: 15px;
-    margin-left: 15px; /* 사이드바와 겹치지 않도록 여백을 추가 */
-    box-shadow: 8px 8px 0 #000; /* 그림자를 줄여서 겹침 방지 */
+    margin-left: 15px;
+    box-shadow: 8px 8px 0 #000;
   }
 
-  .input__container-wrapper {
+  .area_input__container-wrapper {
     margin: 20px auto;
-    max-width: 85%; /* 여유 공간을 위해 너비를 줄임 */
+    max-width: 85%;
   }
 
-  .input__button__shadow {
+  .area_input__button__shadow {
     padding: 8px 16px;
     font-size: 12px;
   }
 
-  .spaces-list li {
+  .area_spaces-list li {
     padding: 10px;
     font-size: 16px;
-    margin-right: 10px; /* 오른쪽 여백을 추가하여 겹침 방지 */
+    margin-right: 10px;
   }
 
-  .editBtn, .deleteBtn {
+  .area_editBtn, .deleteBtn {
     width: 30px;
     height: 30px;
   }
@@ -346,25 +274,24 @@ html, body {
 
 @media (max-width: 480px) {
   .layout-content {
-    padding-left: 20px; /* 작은 화면에서 여유 공간을 추가 */
+    padding-left: 20px;
   }
 
-  .spaces-list {
-    margin-left: 10px; /* 사이드바와 겹치지 않도록 여백 추가 */
-    box-shadow: 5px 5px 0 #000; /* 더 작은 그림자 설정 */
+  .area_spaces-list {
+    margin-left: 10px;
+    box-shadow: 5px 5px 0 #000;
   }
 
-  .input__search {
+  .area_input__search {
     font-size: 14px;
     padding: 10px;
   }
 
-  .spaces-list h2 {
+  .area_spaces-list h2 {
     font-size: 20px;
   }
 
-  .spaces-list li {
+  .area_spaces-list li {
     font-size: 14px;
   }
 }
-

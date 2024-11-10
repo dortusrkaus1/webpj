@@ -83,7 +83,7 @@ html, body {
 }
 
 .shadow__input {
-  content: "공간 추가";
+  content: "방 추가";
   position: absolute;
   width: 100%;
   height: 100%;
