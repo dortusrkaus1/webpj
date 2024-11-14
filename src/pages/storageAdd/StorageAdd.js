@@ -6,7 +6,6 @@ import './StorageAdd.css'; // CSS 파일 import
 const StorageAdd = () => {
     const [storageName, setStorageName] = useState("");
     const [storageRows, setStorageRows] = useState("");
-    const [storageDescription, setStorageDescription] = useState("");
     const [user_no, setUserNo] = useState(null);
     const [room_no, setRoomNo] = useState(null);
     const [error, setError] = useState(null);
@@ -62,11 +61,8 @@ const StorageAdd = () => {
     };
 
     const handleStorageRowsChange = (e) => {
-        setStorageRows(e.target.value);
-    };
-
-    const handleStorageDescriptionChange = (e) => {
-        setStorageDescription(e.target.value);
+        const value = Math.max(1, Math.min(10, Number(e.target.value)));
+        setStorageRows(value);
     };
 
     const handleSubmit = async (e) => {
@@ -84,11 +80,10 @@ const StorageAdd = () => {
 
         try {
             const response = await axios.post(
-                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/storages/storage`,
+                `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/storages/storage/`,
                 {
                     storage_name: storageName,
                     storage_row: storageRows,
-                    storage_description: storageDescription,
                     room_no: room_no // 방 ID를 함께 전달
                 },
                 {
@@ -104,7 +99,6 @@ const StorageAdd = () => {
                 alert("수납장이 성공적으로 추가되었습니다!");
                 setStorageName("");
                 setStorageRows("");
-                setStorageDescription("");
                 setError(null);
                 await fetchStorages(); // 수납장 추가 후 목록 갱신
             } else {
@@ -123,22 +117,21 @@ const StorageAdd = () => {
 
     const handleEditStorage = async (storage_no) => {
         const updatedName = prompt("새로운 수납장 이름을 입력하세요:");
-        const updatedRows = prompt("수납장의 새로운 칸 수를 입력하세요:");
-        const updatedDescription = prompt("수납장 설명을 입력하세요 (선택 사항):");
+        const updatedRows = Math.max(1, Math.min(10, Number(prompt("수납장의 새로운 칸 수를 입력하세요:"))));
 
         if (updatedName && updatedRows) {
             try {
                 const accessToken = localStorage.getItem('access_token');
                 await axios.put(
                     `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/storages/storage/${storage_no}`,
-                    { storage_name: updatedName, storage_row: updatedRows, storage_description: updatedDescription },
+                    { storage_name: updatedName, storage_row: updatedRows },
                     {
                         headers: {
                             'Authorization': `Bearer ${accessToken}`
                         }
                     }
                 );
-                setStorages(storages.map(storage => storage.storage_no === storage_no ? { ...storage, storage_name: updatedName, storage_row: updatedRows, storage_description: updatedDescription } : storage));
+                setStorages(storages.map(storage => storage.storage_no === storage_no ? { ...storage, storage_name: updatedName, storage_row: updatedRows } : storage));
             } catch (error) {
                 console.error("수납장 수정 중 오류 발생:", error);
                 setError("수납장 수정에 실패했습니다. 다시 시도해주세요.");
@@ -184,18 +177,10 @@ const StorageAdd = () => {
                         type="number"
                         name="storagerows"
                         className="storage_input__search"
-                        placeholder="칸 수"
+                        placeholder="칸 수 (1~10)"
                         value={storageRows}
                         onChange={handleStorageRowsChange}
                         required
-                    />
-                    <input
-                        type="text"
-                        name="storagedescription"
-                        className="storage_input__search"
-                        placeholder="설명 (선택 사항)"
-                        value={storageDescription}
-                        onChange={handleStorageDescriptionChange}
                     />
                     <button className="storage_input__button__shadow" onClick={handleSubmit} type="button" disabled={user_no === null || room_no === null}>
                         저장
@@ -213,7 +198,6 @@ const StorageAdd = () => {
                             <li key={storage.storage_no ? storage.storage_no : index} className="storage_storage-item">
                                 <span className="storage_storage-name">{storage.storage_name}</span>
                                 <span className="storage_storage-rows">{storage.storage_row} 칸</span>
-                                <span className="storage_storage-description">{storage.storage_description || "설명 없음"}</span>
                                 <div className="storage_buttons-container">
                                     <button className="editBtn" onClick={() => handleEditStorage(storage.storage_no)}>
                                         <svg height="1em" viewBox="0 0 512 512">

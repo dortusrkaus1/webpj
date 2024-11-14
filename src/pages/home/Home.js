@@ -9,12 +9,15 @@ const Home = () => {
   const [spaces, setSpaces] = useState([]);
   const [selectedSpace, setSelectedSpace] = useState(null);
   const [rooms, setRooms] = useState([]);
-  const [storages, setStorages] = useState([]); // 수납장 목록 추가
+  const [storages, setStorages] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [selectedStorage, setSelectedStorage] = useState(null); // 선택된 수납장 상태 추가
+  const [selectedStorage, setSelectedStorage] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [roomDropdownOpen, setRoomDropdownOpen] = useState(false);
   const [storageDropdownOpen, setStorageDropdownOpen] = useState(false);
+  const [drawerRows, setDrawerRows] = useState(0);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -43,16 +46,12 @@ const Home = () => {
     setDropdownOpen(false);
     localStorage.setItem('selected_area_no', space.area_no);
 
-    // 공간 변경 시 방과 수납장 상태 초기화
     setSelectedRoom(null);
     setSelectedStorage(null);
     setRooms([]);
     setStorages([]);
+    setDrawerRows(0);
 
-    // 선택한 공간에 대한 area_no를 콘솔에 출력
-    console.log(`Selected area_no: ${space.area_no}`);
-
-    // 선택한 공간에 대한 방 목록 조회
     try {
       const accessToken = localStorage.getItem('access_token');
       const response = await axios.get(
@@ -75,14 +74,10 @@ const Home = () => {
     setRoomDropdownOpen(false);
     localStorage.setItem('selected_room_no', room.room_no);
 
-    // 방 변경 시 수납장 상태 초기화
     setSelectedStorage(null);
     setStorages([]);
+    setDrawerRows(0);
 
-    // 선택한 방에 대한 room_no를 콘솔에 출력
-    console.log(`Selected room_no: ${room.room_no}`);
-
-    // 선택한 방에 대한 수납장 목록 조회
     try {
       const accessToken = localStorage.getItem('access_token');
       const response = await axios.get(
@@ -105,8 +100,44 @@ const Home = () => {
     setStorageDropdownOpen(false);
     localStorage.setItem('selected_storage_no', storage.storage_no);
 
-    // 선택한 수납장에 대한 storage_no를 콘솔에 출력
-    console.log(`Selected storage_no: ${storage.storage_no}`);
+    setDrawerRows(storage.storage_row);
+  };
+
+  const handleDrawerClick = async (rowNum) => {
+    if (!selectedSpace || !selectedRoom || !selectedStorage) {
+      console.error("선택된 공간, 방 또는 수납장이 없습니다.");
+      return;
+    }
+
+    if (selectedRow === rowNum) {
+      setSelectedRow(null);
+      setSelectedItems([]);
+      return;
+    }
+
+    setSelectedRow(rowNum);
+
+    try {
+      const userNo = localStorage.getItem('user_no');
+      const accessToken = localStorage.getItem('access_token');
+      const response = await axios.get(
+        `https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app/storages/${userNo}/spaces/${selectedSpace.area_no}/rooms/${selectedRoom.room_no}/storages/${selectedStorage.storage_no}/row/${rowNum}/items`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        }
+      );
+      setSelectedItems(response.data);
+    } catch (error) {
+      console.error("물건 목록 조회 실패: ", error);
+      setSelectedItems([]);
+    }
+  };
+
+  const handleItemClick = (item) => {
+    console.log("Item clicked: ", item);
+    // 여기에서 원하는 동작을 수행할 수 있습니다. 예를 들어, 모달을 띄워 상세 정보를 보여주거나, 다른 페이지로 이동할 수 있습니다.
   };
 
   useEffect(() => {
@@ -139,9 +170,9 @@ const Home = () => {
   return (
     <div className={`home-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
       <SidebarComponent isOpen={isSidebarOpen} onToggle={toggleSidebar} />
-      <div className="home-content">
+      <div className="home-content" style={{ backgroundColor: '#ffffff' }}>
         <HeaderComponent isOpen={isSidebarOpen} />
-        <div className="dropdown-buttons">
+        <div className="dropdown-buttons" style={{ marginBottom: '150px' }}>
           <div className="dropdown">
             <button className="dropdown-button" onClick={handleDropdownClick}>
               {selectedSpace ? selectedSpace.area_name : '공간 선택'}
@@ -201,7 +232,39 @@ const Home = () => {
         </div>
 
         <div className="home-main">
-          <div className="container"></div>
+          <div className="drawer-ui-wrapper">
+            <ul className="drawer-wrapper">
+              {[...Array(drawerRows)].map((_, index) => (
+                <li className="drawer-item" key={index} style={{ '--i': drawerRows - index }}>
+                  <button
+                    className={`drawer-button ${selectedRow === drawerRows - index ? 'active' : ''}`}
+                    onClick={() => handleDrawerClick(drawerRows - index)}
+                  >
+                    {drawerRows - index}번칸
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {selectedItems.length > 0 ? (
+            <div className="item-list">
+              <h3>{selectedRow}번칸의 물건 목록:</h3>
+              <ul>
+                {selectedItems.map((item, index) => (
+                  <li key={index} onClick={() => handleItemClick(item)} className="clickable-item">
+                    {item.item_name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            selectedRow && (
+              <div className="item-list">
+                <h3>{selectedRow}번칸의 물건 목록:</h3>
+                <p>물건이 없습니다</p>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>
