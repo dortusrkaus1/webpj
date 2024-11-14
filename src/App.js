@@ -4,7 +4,6 @@ import SignUp from "./pages/signup/SignUp";
 import VerificationFailed from "./pages/verificationfailed/VerificationFailed";
 import Login from "./pages/login/Login";
 import Verify from "./pages/verify/VerifyCode";
-import ProfileRegister from "./pages/profileRegister/ProfileRegister";
 import ProfileUpdate from "./pages/profileUpdate/ProfileUpdate";
 import StorageAdd from "./pages/storageAdd/StorageAdd";
 import AreaAdd from "./pages/areaAdd/AreaAdd";
@@ -24,7 +23,6 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/verification-failed" element={<VerificationFailed />} />
             <Route path="/verify-code" element={<Verify />} />
-            <Route path="/profile-register" element={<ProfileRegister />} />
             <Route path="/profile-update" element={<ProfileUpdate />} />
             <Route path="/storage-add" element={<StorageAdd />} />
             <Route path="/area-add" element={<AreaAdd/>} />

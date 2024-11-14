@@ -19,6 +19,9 @@ const ProfileUpdate = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
+    // 프로필 등록 여부 확인 상태
+    const [isProfileRegistered, setIsProfileRegistered] = useState(false);
+
     // API 고정 경로 정의
     const API_BASE_URL = "https://port-0-teamproject-2024-2-am952nlt496sho.sel5.cloudtype.app";
 
@@ -55,9 +58,13 @@ const ProfileUpdate = () => {
             setCellPhone(cell_phone);
             setBirthday(birthday);
             setGender(gender);
+
+            // 프로필 등록 여부 설정
+            setIsProfileRegistered(true);
         } catch (error) {
             console.error("사용자 프로필 정보를 가져오는 중 오류 발생:", error);
             setError("사용자 정보를 불러오는 데 실패했습니다.");
+            setIsProfileRegistered(false); // 프로필이 없을 경우 등록되지 않은 것으로 설정
         }
     };
 
@@ -81,9 +88,18 @@ const ProfileUpdate = () => {
             const imageUrl = URL.createObjectURL(imageBlob);
             setImagePreview(imageUrl);
             console.log("이미지 URL:", imageUrl);
+
+            // 프로필 등록 여부 설정
+            setIsProfileRegistered(true);
         } catch (error) {
-            console.error("사용자 프로필 이미지를 가져오는 중 오류 발생:", error);
-            setError("사용자 프로필 이미지를 불러오는 데 실패했습니다.");
+            if (error.response && error.response.status === 404) {
+                console.warn("프로필 이미지를 찾을 수 없습니다.");
+                setImagePreview("");
+            } else {
+                console.error("사용자 프로필 이미지를 가져오는 중 오류 발생:", error);
+                setError("사용자 프로필 이미지를 불러오는 데 실패했습니다.");
+            }
+            setIsProfileRegistered(false); // 프로필이 없을 경우 등록되지 않은 것으로 설정
         }
     };
 
@@ -114,8 +130,8 @@ const ProfileUpdate = () => {
 
         try {
             // 유효성 검증 추가
-            if (!nickname) {
-                setError("닉네임을 입력해주세요.");
+            if (!nickname && !imageFile) {
+                setError("닉네임 또는 이미지를 입력해주세요.");
                 return;
             }
             if (imageFile && !["image/jpeg", "image/png"].includes(imageFile.type)) {
@@ -123,15 +139,31 @@ const ProfileUpdate = () => {
                 return;
             }
 
-            // 이미지 업로드가 필요한 경우
-            let imageUrl = imagePreview;
+            const formData = new FormData();
+            formData.append("nickname", nickname);
             if (imageFile) {
-                const formData = new FormData();
-                formData.append("file", imageFile); // 필드 이름을 "file"로 변경
-                formData.append("nickname", nickname); // 닉네임 추가
+                formData.append("file", imageFile);
+            }
+
+            if (!isProfileRegistered) {
+                // 프로필 등록 (POST 요청)
+                await axios.post(
+                    `${API_BASE_URL}/users/profile-create/${user_no}`,
+                    formData,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        },
+                        withCredentials: true
+                    }
+                );
+                setIsProfileRegistered(true);
+                alert("프로필이 성공적으로 등록되었습니다!");
+            } else {
+                // 프로필 업데이트 (PUT 요청)
                 try {
-                    const imageResponse = await axios.post(
-                        `${API_BASE_URL}/users/profile-create/${user_no}`, // 고정 경로 사용
+                    await axios.put(
+                        `${API_BASE_URL}/users/profile-update/${user_no}`, // 고정 경로 사용
                         formData,
                         {
                             headers: {
@@ -140,35 +172,28 @@ const ProfileUpdate = () => {
                             withCredentials: true // 쿠키 포함
                         }
                     );
-                    imageUrl = imageResponse.data.image_url;
-                } catch (postError) {
-                    if (postError.response && postError.response.data.detail === "Profile already exists for this user.") {
-                        console.log("프로필이 이미 존재합니다. 업데이트합니다.");
+                    alert("프로필이 성공적으로 수정되었습니다!");
+                } catch (putError) {
+                    if (putError.response && putError.response.status === 404) {
+                        // 프로필이 없는 경우 POST 요청으로 다시 시도
+                        console.warn("프로필이 존재하지 않습니다. 새로 등록합니다.");
+                        await axios.post(
+                            `${API_BASE_URL}/users/profile-create/${user_no}`,
+                            formData,
+                            {
+                                headers: {
+                                    'Authorization': `Bearer ${accessToken}`
+                                },
+                                withCredentials: true
+                            }
+                        );
+                        setIsProfileRegistered(true);
+                        alert("프로필이 성공적으로 등록되었습니다!");
                     } else {
-                        throw postError;
+                        throw putError;
                     }
                 }
             }
-
-            // 프로필 업데이트 (PUT 요청)
-            const data = {
-                nickname: nickname,
-                image_url: imageUrl,
-            };
-
-            const response = await axios.put(
-                `${API_BASE_URL}/users/profile-update/${user_no}`, // 고정 경로 사용
-                data,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    withCredentials: true // 쿠키 포함
-                }
-            );
-
-            console.log(response.data);
-            alert("프로필이 성공적으로 수정되었습니다!");
         } catch (error) {
             if (error.response && error.response.data) {
                 console.error("프로필 수정 중 오류 발생:", JSON.stringify(error.response.data, null, 2));
@@ -221,11 +246,15 @@ const ProfileUpdate = () => {
                     </div>
                     <div className="user-info-item" style={{ textAlign: 'left' }}>
                         <label className="label">전화번호</label>
-                        <p className="user-info-value" style={{ textAlign: 'left' }}>{cellPhone}</p>
+                        <p className="user-info-value" style={{ textAlign: 'left' }}>
+                          {cellPhone.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3')}
+                        </p>
                     </div>
                     <div className="user-info-item" style={{ textAlign: 'left' }}>
                         <label className="label">생일</label>
-                        <p className="user-info-value" style={{ textAlign: 'left' }}>{birthday}</p>
+                        <p className="user-info-value" style={{ textAlign: 'left' }}>
+                          {birthday ? `${new Date(birthday).getFullYear()}년 ${(new Date(birthday).getMonth() + 1).toString().padStart(2, '0')}월 ${new Date(birthday).getDate().toString().padStart(2, '0')}일` : "생일 정보 없음"}
+                        </p>
                     </div>
                     <div className="user-info-item" style={{ textAlign: 'left' }}>
                         <label className="label">성별</label>
@@ -239,10 +268,9 @@ const ProfileUpdate = () => {
                         <input
                             className="input-field"
                             type="text"
-                            value={nickname}
+                            value={nickname || ""}
                             onChange={handleNicknameChange}
                             placeholder="닉네임"
-                            required
                         />
                     </div>
 
@@ -256,24 +284,24 @@ const ProfileUpdate = () => {
                                 onChange={handleImageChange}
                                 id="file-upload"
                             />
-                            <label htmlFor="file-upload">파일 선택</label>
+                            <label htmlFor="file-upload"></label> 
                         </div>
                     </div>
                     {imagePreview && (
-                        <div className="image-preview-container">
+                        <div className="profile-image-container">
                             <img
-                                src={imagePreview || 'default-image.png'}
+                                src={imagePreview}
                                 alt="미리보기"
-                                className="image-preview"
-                                style={{ width: '150px', height: '100px', borderRadius: '50%', objectFit: 'cover', aspectRatio: '1 / 1' }}
-                                onError={(e) => { e.target.onerror = null; e.target.src = 'default-image.png'; }}
+                                className="profile-image"
+                                style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }}
                             />
                         </div>
                     )}
 
+
                     {/* 수정 버튼 */}
                     <div className="button-container">
-                        <button className="update-button" type="submit" disabled={user_no === null}>프로필 수정</button>
+                        <button className="update-button" type="submit" disabled={user_no === null}>프로필 업로드</button> 
                     </div>
                 </form>
 
@@ -284,7 +312,7 @@ const ProfileUpdate = () => {
                         <input
                             className="input-field"
                             type="password"
-                            value={newPassword}
+                            value={newPassword || ""}
                             onChange={(e) => setNewPassword(e.target.value)}
                             placeholder="새 비밀번호"
                             required
@@ -295,7 +323,7 @@ const ProfileUpdate = () => {
                         <input
                             className="input-field"
                             type="password"
-                            value={confirmPassword}
+                            value={confirmPassword || ""}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="비밀번호 확인"
                             required

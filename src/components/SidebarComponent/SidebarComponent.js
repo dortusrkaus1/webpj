@@ -35,7 +35,7 @@ const SidebarComponent = () => {
       {/* 사이드바 메뉴 */}
       <ul>
         {[
-          { name: "마이페이지", link: "#" },
+          { name: "마이페이지", link: "/profile-update" },
           { name: "공간", link: "/area-add" },
           { name: "방", link: "/room-add" },
           { name: "수납장", link: "/storage-add" },
